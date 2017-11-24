@@ -5,7 +5,7 @@ import sys
 
 class Apple410:
     """A simple class for queing up commands for the Apple 410"""
-    def __init__(self, portname, baud=1200):
+    def __init__(self, portname, baud=9600):
         self.serial = serial.Serial(portname, baud, rtscts=True, dsrdtr=True, timeout=0.1)
         self.pos = (0,0)
         self.wd = self.vp = (0,0,2394,1759)
@@ -13,9 +13,9 @@ class Apple410:
     def sendchar(self, c):
         self.serial.flush()
         while not self.serial.cts:
-            time.sleep(0.2)
+            time.sleep(0.1)
         while not self.serial.dsr:
-            time.sleep(0.2)
+            time.sleep(0.1)
         self.serial.write(c.encode('ascii'))
         self.serial.flush()
         

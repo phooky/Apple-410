@@ -132,9 +132,29 @@ LT - Line type -
    4 ??
    5 ?? param 
    6 ??
-   
-XT - ? xticks ? -- 5 params
+
+XT
+XT3,120,12,2,2
+
+XTa,b,c,d,e
+c=# of ticks
+d=tick length above line
+e=tick length below line
+b=distance (total)
+a=style???
+
+XT2,100,8,20,20 -- style 2: b is per tick
+XT1,100,8,20,20 -- style 1: b is total distance
+
+
+
+XT - ? xticks ? -- 5 params   0 100 100 5 5
 YT - ? yticks ? -- 5 params
+YT1,100,8,20,20
+YT2,100,8,20,20
+
+
+SOMETHING SETS SPEED
 CH - ??? -- no params
 PM - Point Marking -- 1 param
 PS - pen select
@@ -144,7 +164,7 @@ AC - arc - 5 params
 LI - ??? - no params/arb ???
 IM - ??? - 2 params
 PK - ??? - no params/arb
-RS - ??? - ?0x80 as params?
+RS - ??? - ?0x80 as params? - reset error flag
 VP - Viewport - 4 params
 UL - ??? - no params/arb ? 1 param 0-9?
 SP - ??? - 1 param ??
