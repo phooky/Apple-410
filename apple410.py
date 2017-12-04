@@ -13,9 +13,9 @@ class Apple410:
     def sendchar(self, c):
         self.serial.flush()
         while not self.serial.cts:
-            time.sleep(0.1)
+            time.sleep(0.2)
         while not self.serial.dsr:
-            time.sleep(0.1)
+            time.sleep(0.2)
         self.serial.write(c.encode('ascii'))
         self.serial.flush()
         

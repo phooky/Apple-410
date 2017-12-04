@@ -16,15 +16,23 @@ def parse_coord(d):
     
 def d_to_commands(d):
     segs = []
-    (cmd, remain) = (d[0],d[1:].strip())
-    if cmd == 'm':
-        (coord, remain) = parse_coord(remain)
-        while remain and (remain[0] == '-' or remain[0] in string.digits):
-            (delta, remain) = parse_coord(remain)
-            nc = (delta[0]+coord[0],delta[1]+coord[1])
-            segs.append( (coord, nc) )
+    while d:
+        (cmd, d) = (d[0],d[1:].strip())
+        if cmd == 'm':
+            (coord, d) = parse_coord(d)
+            while d and (d[0] == '-' or d[0] in string.digits):
+                (delta, d) = parse_coord(remain)
+                nc = (delta[0]+coord[0],delta[1]+coord[1])
+                segs.append( (coord, nc) )
+                coord = nc
+        elif cmd == 'M':
+            (coord, d) = parse_coord(d)
+        elif cmd == 'L':
+            (nc, d) = parse_coord(d)
+            segs.append( (coord,nc) )
             coord = nc
-        return segs
+        else:
+            raise("Unrecognized: {}".format(d[0:50]))
     return segs
 
             
