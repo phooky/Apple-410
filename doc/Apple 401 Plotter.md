@@ -61,7 +61,7 @@ Raise the pen and move the plotter head to the position specified by the x,y coo
 
 Params: 2
 
-### ??Move relative (MR)??
+### Move relative (MR)
 
 ```
 MRx,y
@@ -71,6 +71,7 @@ Raise the pen and move the plotter head to a position offset x,y from its
 current position.
 
 Params: 2
+
 ### Draw absolute (DA)
 
 ```
@@ -78,96 +79,203 @@ DAx,y(,x,y..)
 ```
 
 Lower the pen and draw a line from the current position to the position
-specified by the x,y coordinates. Continues 
+specified by the x,y coordinates. If more than one coordinate pair is 
+specified, continues to draw lines to the subsequent points as well.
 
-Params: arb.
+Params: 2(+2*n)
 
-==??Draw relative (DR)??==
+### Draw relative (DR)
 
-DRx,y(,x,y)*
+```
+DRx,y(,x,y..)
+```
 
-lower pen and draw line from current position to an x,y offset. Multiple
-offsets may be specified in a single command.
+Lower the pen and draw a line from the current position to the position
+offset x,y for its current position. If more than one coordinate pair is 
+specified, continues to draw lines to the subsequent offset points as well.
 
-Params: arb.
+Params: 2(+2*n)
 
-==Circle (CA)==
+### Circle (CA)
 
+```
 CAr,x,y
+```
 
-lower pen and draw a circle of radius r centered at x,y.
+Lower the pen and draw a circle of radius r centered at x,y.
 
 Params: 3
 
-==Letter size (LS)==
+### Letter size (LS)
 
+```
 LSs
+```
 
-sets the font size to s
+Sets the font size to s (?? in what units? relative to what system of coordinates? ??)
 
-==Letter rotation (LR)==
+Params: 1
 
-LRtheta
+### Letter rotation (LR)
 
-draw following text rotated by theta
-in degrees, clockwise
+```
+LRθ
+```
 
-==Print letters (PL)==
+Sets the angle to draw subsequent text at θ degrees clockwise.
 
+Params: 1
+
+### Print letters (PL)
+
+```
 PLtext
+```
 
-lower pen and draw specified text at current position
+Lower the pen and draw the specified text at the current position,
+using the currently active letter size and rotation settings.
 
-==Pen select (PS)==
+Params : 1 (string)
 
+### Pen select (PS)
+
+```
 PSi
+```
 
-select pen i (where i is in 1-4)
+Select pen i (where i is in the range 1-4).
 
+Params: 1
 
-LT - Line type -
-   1 solid
-   2 ??
-   3 ??
-   4 ??
-   5 ?? param 
-   6 ??
+### Line type (LT)
 
-XT
-XT3,120,12,2,2
+```
+LTn
+```
 
-XTa,b,c,d,e
-c=# of ticks
-d=tick length above line
-e=tick length below line
-b=distance (total)
-a=style???
+Select the line style for subsequent draw operations. `n` is a value in the
+range 1-9:
 
-XT2,100,8,20,20 -- style 2: b is per tick
-XT1,100,8,20,20 -- style 1: b is total distance
+| n | Line style       |
+|---|------------------|
+| 1 | Solid            | 
+| 2 | Dotted           | 
+| 3 | Short dash       | 
+| 4 | Medium dash      | 
+| 5 | Long dash        | 
+| 6 | Line w/ dots     | 
+| 7 | Line w/ one short dash   | 
+| 8 | Line w/ two dots         |
+| 9 | Line w/ two short dashes |
 
+Params: 1
 
+### X-axis ticks (XT)
 
-XT - ? xticks ? -- 5 params   0 100 100 5 5
-YT - ? yticks ? -- 5 params
-YT1,100,8,20,20
-YT2,100,8,20,20
+```
+XTs,d,n,a,b
+```
 
+Draw an X axis with tick marks as specified. There are two "styles"
+`s` of input available, which determine how the distance `d` parameter
+is interpreted.
 
-SOMETHING SETS SPEED
-CH - ??? -- no params
-PM - Point Marking -- 1 param
-PS - pen select
-PV - ??? - 1 param
+| parameter | function                              |
+|-----------|---------------------------------------|
+| s         | style                                 |
+| d         | distance                              |
+| n         | number of tick marks                  |
+| a         | length of tick mark above the axis    |
+| b         | length of tick mark below the axis    |
+
+If the `s` parameter is set to 1, then the distance is interpreted as
+the length of the entire axis. If `s` is set to 2, then the distance is
+interpretes as the length of the space between adjacent tick marks.
+
+Params: 5
+
+### Y-axis ticks (YT)
+
+```
+YTs,d,n,a,b
+```
+
+Draw a Y axis with tick marks as specified. The parameters are handled
+in the same manner as the `XT` command (see above).
+
+Params: 5
+
+### Clear/Reset (CH)
+
+```
+CH
+```
+
+Raise the pen and move the plotter head to its original position; usually used
+at the end of a plot.
+
+Params: 0
+
+### Point mark (PM)
+
+```
+PMt
+```
+
+Draw a marker at the current position. The marker type is specified by the `t`
+parameter. The marker size is determined by the font size setting specified by the
+`LS` command; consider the markers as just special characters.
+
+The various marker shapes are illustrated in the images below.
+
+![Image of PM1-5](pm1-5.jpg) ![Image of PM6-10](pm6-10.jpg) ![Image of PM11-15](pm11-15.jpg)
+
+Params: 1
+
+### Pen velocity (PV)
+
+```
+PVv
+```
+
+Sets the drawing velocity `v`, on a scale of 1-10, where 1 is slowest, 10 is fastest.
+The default speed is 10.
+
+Params: 1
+
+### Slant lettering (SL)
+
+```
+SLθ
+```
+
+Slants subsequent text by an angle specified by `θ` degrees.
+
+Params: 1
+
+### Viewport (VP)
+VP - Viewport - 4 params
+
+### Window (WD)
 WD - window - 4 params
+
+### Reset (RS)
+
+```
+RS
+```
+
+Resets the error bit. If the error LED is lit, it should be extinguished.
+
+RS will apparently accept some parameters, but it's unknown if this does anything.
+
+Params: 0 or 1
+
 AC - arc - 5 params
 LI - ??? - no params/arb ???
 IM - ??? - 2 params
 PK - ??? - no params/arb
-RS - ??? - ?0x80 as params? - reset error flag
-VP - Viewport - 4 params
 UL - ??? - no params/arb ? 1 param 0-9?
 SP - ??? - 1 param ??
 LF - ??? - 1 param ? 0-9
-SL - ??? - 1 param  -- Slanted lettering (by %?)
 
