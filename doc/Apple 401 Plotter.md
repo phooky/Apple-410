@@ -8,7 +8,12 @@ absolute coordinates and defines the physical area in which coordinates are reso
 The "window" defines the virtual coordinates of the drawing area, which are then
 mapped to the viewport.
 
+All drawing operations are clipped to the current viewport and window; parts of
+arcs, circles, lines, etc. that would be rendered outside the viewport are not
+drawn.
+
 Commands sent to the 401 are terminated by the ASCII "end of text" delimiter, 0x03.
+A semicolon may also be used.
 
 ### Serial connection
 
@@ -99,12 +104,13 @@ Params: 2(+2*n)
 ### Circle (CA)
 
 ```
-CAr,x,y
+CAr(,x,y)
 ```
 
-Lower the pen and draw a circle of radius r centered at x,y.
+Lower the pen and draw a circle of radius r centered at x,y. If x,y are not
+specified the circle will be centered at the current position.
 
-Params: 3
+Params: 1 or 3
 
 ### Letter size (LS)
 
@@ -254,10 +260,28 @@ Slants subsequent text by an angle specified by `θ` degrees.
 Params: 1
 
 ### Viewport (VP)
-VP - Viewport - 4 params
+
+```
+VPx1,y1,x2,y2
+```
+
+Specifies the viewport area, in absolute coordinates, to draw in. See the introduction
+for an explanation of how the viewport is used. `x1,y1` specify the upper left hand corner
+of the viewport; `x2,y2` specify the lower right hand of the viewport.
+
+Params: 4
 
 ### Window (WD)
-WD - window - 4 params
+
+```
+WDx1,y1,x2,y2
+```
+
+The window into which to draw. See the introduction for an explanation of how the window
+is used. `x1,y1` specify the upper left hand corner
+of the viewport; `x2,y2` specify the lower right hand of the viewport.
+
+Params: 4
 
 ### Reset (RS)
 
@@ -271,9 +295,32 @@ RS will apparently accept some parameters, but it's unknown if this does anythin
 
 Params: 0 or 1
 
-AC - arc - 5 params
+### Arc (AC)
+
+```
+ACr,θ1,θ2(,x,y)
+```
+
+Draws a circular arc of radius `r` from `θ1` to `θ2`. If x,y are specified, they
+determined the center of the arc's circle. If they are not specified, the current
+position is considered to be the center of the arc's circle.
+
+After the arc is drawn, the endpoint of the arc is considered to be the new position.
+
+Params: 3 or 5
+
+### Unknown (IM)
+
+```
+IMa,b
+```
+
+IM0,31 turns on error checking; IM0,0 turns it off?
+This is referenced obliquely in part II of the manual.
+
+## Unknown commands
+
 LI - ??? - no params/arb ???
-IM - ??? - 2 params
 PK - ??? - no params/arb
 UL - ??? - no params/arb ? 1 param 0-9?
 SP - ??? - 1 param ??

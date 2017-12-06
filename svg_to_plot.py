@@ -76,6 +76,10 @@ if __name__ == '__main__':
     yoff = yoff/s
     segs = map(lambda x: ((x[0][0]/s + xoff,x[0][1]/s + yoff),
                           (x[1][0]/s + xoff,x[1][1]/s + yoff)), segs)
+    last = (0.0,0.0)
     for (sfrom, sto) in segs:
-        print("MA{:.2f},{:.2f}\nDA{:.2f},{:.2f}".format(sfrom[0],sfrom[1],sto[0],sto[1]))
+        if sfrom != last:
+            print("MA{:.2f},{:.2f}".format(sfrom[0],sfrom[1]))
+        print("DA{:.2f},{:.2f}".format(sto[0],sto[1]))
+        last = sto
     doc.unlink()
