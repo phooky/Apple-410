@@ -27,6 +27,7 @@ If parity is selected, SW3 determines the type of parity bit. ON = odd parity,
 OFF = even parity.
 
 SW4 and SW5 select the number of stop bits:
+
 | SW4  | SW5  |  Stop bits    |
 |------|------|---------------|
 | OFF  | OFF  | 2 stop bits   |
@@ -35,6 +36,7 @@ SW4 and SW5 select the number of stop bits:
 | ON   | ON   | invalid       |
 
 SW6, SW7, and SW8 select the baud rate:
+
 | SW6 | SW7 | SW8 | Baud       |
 |-----|-----|-----|------------|
 | OFF | OFF | OFF |  75 baud   |
