@@ -1,5 +1,6 @@
 import sys
 import argparse
+from . import Apple410
 
 def main():
     parser = argparse.ArgumentParser("apple410",

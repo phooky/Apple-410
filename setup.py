@@ -44,7 +44,7 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['serial'],
+    install_requires=['pyserial'],
 
     python_requires='>=3',
     # To provide executable scripts, use entry points in preference to the
@@ -52,7 +52,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
             'console_scripts': [
-                'apple410=apple410:main',
+                'apple410=apple410.cmdline:main',
                 ],
             },
     )
