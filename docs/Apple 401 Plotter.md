@@ -1,5 +1,12 @@
 # The Apple 401 Color Plotter
 
+## Quick introduction and apology
+
+I don't have access to the manual for the Apple 410, which describes all the commands
+in detail. Everything below (other than the dip switch settings) was sussed out by
+ripping the ROM, extracting the self-test script and the command lookup table, and 
+trial and error. If you have access to better documentation, please update this document.
+
 ## General concepts
 
 The way the 401 interprets a coordinate at any given time depends on the current
