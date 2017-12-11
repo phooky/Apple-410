@@ -1,6 +1,7 @@
 import sys
 import argparse
 from . import Apple410
+from .svg_to_plot import plot_svg
 
 def main():
     parser = argparse.ArgumentParser("apple410",
@@ -23,9 +24,7 @@ def main():
     if args.FILE == "-":
         f = sys.stdin
     else:
-        f = open(scr)
-    if len(sys.argv) > 1:
-        scr = sys.argv[1]
+        f = open(args.FILE)
     if args.svg:
         print("SVG conversion is not yet implemented!")
         sys.exit(1)
@@ -34,4 +33,17 @@ def main():
         print("Sending {}".format(line.strip()))
         a.send(line.strip())
     
+def svg2plot():
+    parser = argparse.ArgumentParser("svg2plot",
+            description="Convert an SVG to Apple 410 Color Plotter commands",
+            epilog="This is a work in progress and only handles simple paths.")
+    parser.add_argument('-c', '--center', action='store_true',
+            help = 'Center the SVG')
+    parser.add_argument('SVG', help='The SVG to process. "-" will read the SVG from standard input.')
+    args = parser.parse_args()
+    if args.SVG == '-':
+        f = sys.stdin
+    else:
+        f = open(args.SVG)
+    plot_svg(f,center=args.center)
 

@@ -43,14 +43,7 @@ w=2394
 h=1700
 
 
-if __name__ == '__main__':
-    scr = '-'
-    if len(sys.argv) > 1:
-        scr = sys.argv[1]
-    if scr == "-":
-        f = sys.stdin
-    else:
-        f = open(scr)
+def plot_svg(f, center=False):
     doc = minidom.parse(f)
     segs = []
     for path in doc.getElementsByTagName('path'):
@@ -64,16 +57,18 @@ if __name__ == '__main__':
     sys.stderr.write("X {} {}\n".format(minx,maxx))
     sys.stderr.write("Y {} {}\n".format(miny,maxy))
     (spanx,spany) = (maxx-minx,maxy-miny)
-    xoff = -minx
-    yoff = -miny
     (s1, s2) = (1.0,1.0)
     if spanx > w:
         s1 = spanx/w
     if spany > h:
         s2 = spany/h
     s = max(s1,s2)
-    xoff = xoff/s
-    yoff = yoff/s
+    if center:
+        xoff = w/2 - (minx + spanx/2)/s
+        yoff = w/2 - (miny + spany/2)/s
+    else:
+        xoff = -minx/s
+        yoff = -miny/s
     segs = map(lambda x: ((x[0][0]/s + xoff,x[0][1]/s + yoff),
                           (x[1][0]/s + xoff,x[1][1]/s + yoff)), segs)
     last = (0.0,0.0)
