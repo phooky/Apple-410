@@ -65,8 +65,10 @@ def plot_svg(f, center=False):
     s = max(s1,s2)
     if center:
         xoff = w/2 - (minx + spanx/2)/s
-        yoff = w/2 - (miny + spany/2)/s
+        yoff = h/2 - (miny + spany/2)/s
+        sys.stderr.write("Centered\n")
     else:
+        sys.stderr.write("Not centered\n")
         xoff = -minx/s
         yoff = -miny/s
     segs = map(lambda x: ((x[0][0]/s + xoff,x[0][1]/s + yoff),
