@@ -137,10 +137,14 @@ class Plotter:
 
     def pl(self,params):
         self.finish_path()
-        t = self.d.text(params,insert=self.pos)
-        t.rotate(self.text_theta,center=self.pos)
+        flip_pos = (self.pos[0], -self.pos[1])
+        t = self.d.text(params,insert=flip_pos)
+        t.rotate(self.text_theta,center=flip_pos)
         t['font-size'] = self.text_size
-        self.get_g().add(t)
+        g = self.d.g()
+        g.add(t)
+        g.matrix(1,0,0,-1,0,0)
+        self.get_g().add(g)
 
     def write(self,out):
         self.invalidate_window()
