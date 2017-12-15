@@ -3,12 +3,6 @@ import sys
 import svgwrite
 import math
 
-d = svgwrite.Drawing(profile='tiny')
-
-
-def getnum(line):
-    pass
-
 def coordlist(line,expected=-1):
     l = list(map(float,line.split(',')))
     if expected > -1:
@@ -21,92 +15,148 @@ pens = [
     svgwrite.rgb(0, 100, 0, '%'),
     svgwrite.rgb(0, 0, 100, '%') ]
 
-pennum = 0
-pos = (0.0,0.0)
-text_rotation = 0.0
-text_size = 1
-# "viewport"? part of the page to plot on
-vp = (0.0,0.0,2394,1759)
-# virtual size for viewport
-wd = (0.0,0.0,2394,1759)
+# Default W/H
+W = 2394
+H = 1759
 
-def tcoord(x, vpl, vph, wdl, wdh):
-    vpw = vph-vpl
-    wdw = wdh-wdl
-    nx = vpw*(x/wdw)
-    return nx + vpl
+class Plotter:
+    def __init__(self):
+        self.pennum = 0
+        self.viewport = (0, 0, W, H)
+        self.window = (0, 0, W, H)
+        self.cur_g = None
+        self.cur_d = None
+        self.d = svgwrite.Drawing(profile='tiny')
+        self.text_theta = 0
+        self.text_size = 1
+        self.pos = (0,0)
 
-def transform1(x):
-    vpw = vp[2]-vp[0]
-    wdw = wd[2]-wd[0]
-    nx = vpw*(x/wdw)
-    return nx
+    def get_g(self):
+        "Return a valid group for this viewport/window"
+        if not self.cur_g:
+            self.cur_g = self.d.g()
+            (v,w) = (self.viewport,self.window)
+            a = (v[2]-v[0])/(w[2]-w[0])
+            d = (v[3]-v[1])/(w[3]-w[1])
+            e = v[0] - w[0]*a
+            f = v[1] - w[1]*d
+            sys.stderr.write("GROUP a {} d {} e {} f {}\n".format(a,d,e,f))
+            self.cur_g.matrix(a,0,0,d,e,f)
+        return self.cur_g
 
-def transform(x,y):
-    nx = tcoord(x,vp[0],vp[2],wd[0],wd[2])
-    ny = tcoord(y,vp[1],vp[3],wd[1],wd[3])
-    return nx, ny
+    def finish_g(self):
+        if self.cur_g:
+            self.d.add(self.cur_g)
+        self.cur_g = None
 
-for line in sys.stdin.readlines():
-    line = line.strip()
-    cmd = line[0:2]
-    line = line[2:].strip()
-    if cmd == 'MA':
-        l=coordlist(line,2)
-        pos=transform(l[0],l[1])
-    elif cmd == 'VP': #viewport?
-        l=coordlist(line,4)
-        vp=(l[0],l[1],l[2],l[3])
-    elif cmd == 'WD': 
-        l=coordlist(line,4)
-        wd=(l[0],l[1],l[2],l[3])
-    elif cmd == 'DA':
-        l=coordlist(line)
-        while len(l) > 0:
-            nextp = transform(l[0],l[1])
-            l = l[2:]
-            d.add(d.line(pos,nextp,stroke=pens[pennum]))
-            pos = nextp
-    elif cmd == 'CA': #circle
-        l=coordlist(line)
-        r=transform1(l[0])
-        p=transform(l[1],l[2])
-        c=d.circle(center=p,r=r)
+    def finish_path(self):
+        if self.cur_d:
+            path=self.d.path(
+                d=self.cur_d,
+                stroke=pens[self.pennum])
+            path.fill(opacity=0)
+            self.get_g().add(path)
+        self.cur_d = None
+
+    def add_to_path(self, addition):
+        if self.cur_d:
+            self.cur_d = self.cur_d + " " + addition
+        else:
+            self.cur_d = addition
+
+    def invalidate_window(self):
+        self.finish_path()
+        self.finish_g()
+
+    def vp(self, params):
+        self.invalidate_window()
+        l=coordlist(params,4)
+        self.viewport=(l[0],l[1],l[2],l[3])
+
+    def wd(self, params):
+        self.invalidate_window()
+        l=coordlist(params,4)
+        self.window=(l[0],l[1],l[2],l[3])
+    
+    def ma(self, params):
+        l=coordlist(params,2)
+        self.add_to_path("M{} {}".format(l[0],l[1]))
+        self.pos = (l[0],l[1])
+
+    def mr(self, params):
+        l=coordlist(params,2)
+        self.add_to_path("m{} {}".format(l[0],l[1]))
+        self.pos = (l[0],l[1])
+
+    def da(self, params):
+        l=coordlist(params)
+        self.add_to_path("L{}".format(" ".join(map(str,l))))
+        self.pos = (l[-2],l[-1])
+
+    def dr(self, params):
+        l=coordlist(params)
+        self.add_to_path("l{}".format(" ".join(map(str,l))))
+        self.pos = (l[-2],l[-1])
+
+    def ca(self, params):
+        self.finish_path()
+        l=coordlist(params)
+        r=l[0]
+        if len(l) > 2:
+            p=(l[1],l[2])
+        else:
+            p=self.pos
+        c=self.d.circle(center=p,r=r)
         c.fill(opacity=0)
-        c.stroke(color=pens[pennum],opacity=100,width=2)
-        d.add(c)
-    elif cmd == 'AC': #arc
-        l=coordlist(line)
-        r=transform1(l[0])
-        p=transform(l[3],l[4])
+        c.stroke(color=pens[self.pennum],opacity=100,width=2)
+        self.get_g().add(c)
+
+    def ac(self,params):
+        l=coordlist(params)
+        r=l[0]
+        if len(l) > 3:
+            p=(l[3],l[4])
+        else:
+            p=self.pos
         t2, t1 = math.radians(l[1]),math.radians(l[2])
         x1, y1 = p[0] + (r*math.cos(t1)), p[1] + (r*math.sin(t1))
         x2, y2 = p[0] + (r*math.cos(t2)), p[1] + (r*math.sin(t2))
         ds="M {} {} A {} {} 0 0 0 {} {}".format(x1,y1,r,r,x2,y2)
-        path=d.path(
-            d=ds,
-            stroke=pens[pennum])
-        path.fill(opacity=0)
-        d.add(path)
-    elif cmd == 'LR':
-        text_rotation = float(line)
-    elif cmd == 'LS':
-        text_size = float(line)
-    elif cmd == 'PS':
-        pennum = int(line) - 1
-        #print("Switching to pen {}".format(pennum))
-    elif cmd == 'PL':
-        t = d.text(line,insert=pos)
-        t.rotate(text_rotation,center=pos)
-        d.add(t)
-        pass
-    else:
-        #print("Command {}".format(cmd))
-        pass
+        self.add_to_path(ds)
 
-d.write(sys.stdout)
 
-    
-    
-    
-    
+    def lr(self,params):
+        self.text_theta = float(params)
+
+    def ls(self,params):
+        self.text_size = float(params)
+
+    def ps(self,params):
+        self.pennum = int(params) - 1
+
+    def pl(self,params):
+        self.finish_path()
+        t = self.d.text(params,insert=self.pos)
+        t.rotate(self.text_theta,center=self.pos)
+        t['font-size'] = self.text_size
+        self.get_g().add(t)
+
+    def write(self,out):
+        self.invalidate_window()
+        self.d.write(out)
+
+    def process_cmd(self,command):
+        cmd_code = command[0:2].lower()
+        params = command[2:]
+        try:
+            getattr(self,cmd_code)(params)
+        except AttributeError:
+            sys.stderr.write("Unrecognized command code {}\n".format(cmd_code))
+
+p = Plotter()
+
+for line in sys.stdin.readlines():
+    line = line.strip()
+    p.process_cmd(line)
+
+p.write(sys.stdout)
