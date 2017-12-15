@@ -19,8 +19,19 @@ All drawing operations are clipped to the current viewport and window; parts of
 arcs, circles, lines, etc. that would be rendered outside the viewport are not
 drawn.
 
+If the size of the window has a different aspect ratio than the size of the viewport,
+the elements drawn will be stretched to fit. You can use this mechanism to draw ellipses
+or stretched text.
+
 Commands sent to the 401 are terminated by the ASCII "end of text" delimiter, 0x03.
-A semicolon may also be used.
+A semicolon or newline may also be used in some situations; however it's safest to
+terminate a text-writing command (PL) with 0x03.
+
+## Units
+
+The base units for the viewport (as used in the VP command) are approximately 1 unit
+= 0.1mm.  (In practice, this is slightly off, so I don't recommend drawing any rulers
+with this machine.)
 
 ### Serial connection
 
