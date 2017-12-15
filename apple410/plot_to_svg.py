@@ -40,6 +40,9 @@ class Plotter:
             d = (v[3]-v[1])/(w[3]-w[1])
             e = v[0] - w[0]*a
             f = v[1] - w[1]*d
+            # everything needs to flip on the Y axis.
+            f = H-f
+            d = -d
             sys.stderr.write("GROUP a {} d {} e {} f {}\n".format(a,d,e,f))
             self.cur_g.matrix(a,0,0,d,e,f)
         return self.cur_g
@@ -59,10 +62,9 @@ class Plotter:
         self.cur_d = None
 
     def add_to_path(self, addition):
-        if self.cur_d:
-            self.cur_d = self.cur_d + " " + addition
-        else:
-            self.cur_d = addition
+        if not self.cur_d:
+            self.cur_d = "M{} {}".format(self.pos[0],self.pos[1])
+        self.cur_d = self.cur_d + " " + addition
 
     def invalidate_window(self):
         self.finish_path()
@@ -80,13 +82,11 @@ class Plotter:
     
     def ma(self, params):
         l=coordlist(params,2)
-        self.add_to_path("M{} {}".format(l[0],l[1]))
         self.pos = (l[0],l[1])
 
     def mr(self, params):
         l=coordlist(params,2)
-        self.add_to_path("m{} {}".format(l[0],l[1]))
-        self.pos = (l[0],l[1])
+        self.pos = (self.pos[0]+l[0],self.pos[1]+l[1])
 
     def da(self, params):
         l=coordlist(params)
@@ -132,6 +132,7 @@ class Plotter:
         self.text_size = float(params)
 
     def ps(self,params):
+        self.finish_path()
         self.pennum = int(params) - 1
 
     def pl(self,params):
