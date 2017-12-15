@@ -158,10 +158,13 @@ class Plotter:
         except AttributeError:
             sys.stderr.write("Unrecognized command code {}\n".format(cmd_code))
 
-p = Plotter()
+    def read(self,inf):
+        for line in inf.readlines():
+            line = line.strip()
+            p.process_cmd(line)
 
-for line in sys.stdin.readlines():
-    line = line.strip()
-    p.process_cmd(line)
+if __name__=='__main__':
+    p = Plotter()
+    p.read(sys.stdin)
+    p.write(sys.stdout)
 
-p.write(sys.stdout)
