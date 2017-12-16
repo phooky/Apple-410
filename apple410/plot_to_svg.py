@@ -26,15 +26,17 @@ class Plotter:
         self.window = (0, 0, W, H)
         self.cur_g = None
         self.cur_d = None
-        self.d = svgwrite.Drawing(profile='tiny',size=(W,H))
+        self.d = svgwrite.Drawing(size=(W,H))
         self.text_theta = 0
         self.text_size = 1
         self.pos = (0,0)
+        self.clip = None
+        self.clipno = 0
 
     def get_g(self):
         "Return a valid group for this viewport/window"
         if not self.cur_g:
-            self.cur_g = self.d.g()
+            self.cur_g = self.d.g(style='clip-path: url(#cl{})'.format(self.clipno))
             (v,w) = (self.viewport,self.window)
             a = (v[2]-v[0])/(w[2]-w[0])
             d = (v[3]-v[1])/(w[3]-w[1])
@@ -43,8 +45,11 @@ class Plotter:
             # everything needs to flip on the Y axis.
             f = H-f
             d = -d
-            sys.stderr.write("GROUP a {} d {} e {} f {}\n".format(a,d,e,f))
             self.cur_g.matrix(a,0,0,d,e,f)
+            self.clip = self.d.clipPath(id='cl{}'.format(self.clipno))
+            self.clip.add(self.d.rect((w[0],w[1]),(w[2],w[3])))
+            self.d.defs.add(self.clip)
+            self.clipno += 1
         return self.cur_g
 
     def finish_g(self):
