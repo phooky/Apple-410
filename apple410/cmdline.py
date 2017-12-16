@@ -47,3 +47,18 @@ def svg2plot():
         f = open(args.SVG)
     plot_svg(f,center=args.center)
 
+from .plot_to_svg import Plotter
+
+def plot2svg():
+    parser = argparse.ArgumentParser("plot2svg",
+            description="Convert a set of Apple 410 Color Plotter commands to an SVG")
+    parser.add_argument('PLOT', help='The plotter file to process. "-" will read plotter commands from standard input.')
+    args = parser.parse_args()
+    if args.PLOT == '-':
+        f = sys.stdin
+    else:
+        f = open(args.PLOT)
+    p = Plotter()
+    p.read(f)
+    p.write(sys.stdout)
+    

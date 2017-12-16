@@ -26,7 +26,7 @@ class Plotter:
         self.window = (0, 0, W, H)
         self.cur_g = None
         self.cur_d = None
-        self.d = svgwrite.Drawing(profile='tiny')
+        self.d = svgwrite.Drawing(profile='tiny',size=(W,H))
         self.text_theta = 0
         self.text_size = 1
         self.pos = (0,0)
@@ -161,7 +161,7 @@ class Plotter:
     def read(self,inf):
         for line in inf.readlines():
             line = line.strip()
-            p.process_cmd(line)
+            self.process_cmd(line)
 
 if __name__=='__main__':
     p = Plotter()

@@ -9,12 +9,27 @@ def plot_to_svg(instream, outstream):
     p.read(instream)
     p.write(outstream)
 
-class Apple410:
-    """A simple class for queing up commands for the Apple 410"""
-    def __init__(self, portname, baud=9600, flow_control_safe=False, cts_hack=False):
-        self.serial = serial.Serial(portname, baud, rtscts=False, dsrdtr=True, timeout=0.1)
+class Apple410Common:
+    def __init__(self):
         self.pos = (0,0)
         self.wd = self.vp = (0,0,2394,1759)
+
+    def move_to(self, coords):
+        self.send('MA{},{}'.format(coords[0],coords[1]))
+        self.pos = coords
+
+    def draw_to(self, coords):
+        self.send('DA{:.2f},{:.2f}'.format(coords[0],coords[1]))
+        self.pos = coords
+            
+    def pen_select(self, index):
+        self.send('PS{}'.format(index))
+
+class Apple410(Apple410Common):
+    """A simple class for queing up commands for the Apple 410"""
+    def __init__(self, portname, baud=9600, flow_control_safe=False, cts_hack=False):
+        Apple410Common.__init__(self)
+        self.serial = serial.Serial(portname, baud, rtscts=False, dsrdtr=True, timeout=0.1)
         self.flow_control_safe = flow_control_safe
         self.cts_hack = cts_hack
 
@@ -39,14 +54,21 @@ class Apple410:
             self.sendchar(c)
         self.sendchar('\x03')
 
-    def move_to(self, coords):
-        self.send('MA{},{}'.format(coords[0],coords[1]))
-        self.pos = coords
+    def close(self):
+        self.serial.close()
 
-    def draw_to(self, coords):
-        self.send('DA{:.2f},{:.2f}'.format(coords[0],coords[1]))
-        self.pos = coords
-            
-    def pen_select(self, index):
-        self.send('PS{}'.format(index))
-    
+class MockApple410(Apple410Common):
+    def __init__(self, path):
+        Apple410Common.__init__(self)
+        if type(path) == type(''):
+            self.f = open(path,'w')
+        else:
+            self.f = path
+
+    def send(self, command):
+        self.f.write(command)
+        self.f.write('\n')
+
+    def close(self):
+        self.f.close()
+
