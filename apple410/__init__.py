@@ -44,6 +44,8 @@ class Apple410(Apple410Common):
             self.serial.flush()
         else:
             self.serial.flush()
+            while not self.serial.cts:
+                time.sleep(0.2)
             while not self.serial.dsr:
                 time.sleep(0.2)
             self.serial.write(c.encode('ascii'))
