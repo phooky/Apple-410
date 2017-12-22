@@ -1,13 +1,6 @@
 #!/usr/bin/python3
 import serial
 import time
-from .plot_to_svg import Plotter
-
-def plot_to_svg(instream, outstream):
-    "Convert a set of plot instructions to an SVG. Works mininmally."
-    p = Plotter()
-    p.read(instream)
-    p.write(outstream)
 
 class Apple410Common:
     def __init__(self):

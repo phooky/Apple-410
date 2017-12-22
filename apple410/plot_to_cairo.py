@@ -139,7 +139,7 @@ class CairoPlotter:
         sys.stderr.write("text at {} {}\n".format(x,y))
         self.context.show_text(params)
 
-    def write(self,out):
+    def write(self):
         self.finish_path()
         self.surface.finish()
 
@@ -157,7 +157,7 @@ class CairoPlotter:
             self.process_cmd(line)
 
 if __name__=='__main__':
-    p = CairoPlotter('foo.svg')
+    p = CairoPlotter(sys.stdout.buffer)
     p.read(sys.stdin)
-    p.write(sys.stdout)
+    p.write()
 

@@ -47,7 +47,7 @@ def svg2plot():
         f = open(args.SVG)
     plot_svg(f,center=args.center)
 
-from .plot_to_svg import Plotter
+from .plot_to_cairo import CairoPlotter
 
 def plot2svg():
     parser = argparse.ArgumentParser("plot2svg",
@@ -58,7 +58,7 @@ def plot2svg():
         f = sys.stdin
     else:
         f = open(args.PLOT)
-    p = Plotter()
+    p = CairoPlotter(sys.stdout.buffer)
     p.read(f)
-    p.write(sys.stdout)
+    p.write()
     
