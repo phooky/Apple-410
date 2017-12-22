@@ -9,11 +9,11 @@ def coordlist(line,expected=-1):
         assert len(l) == expected
     return l
 
-#pens = [
-#    svgwrite.rgb(0, 0, 0, '%'),
-#    svgwrite.rgb(100, 0, 0, '%'),
-#    svgwrite.rgb(0, 100, 0, '%'),
-#    svgwrite.rgb(0, 0, 100, '%') ]
+pens = [
+    (0, 0, 0),
+    (100, 0, 0),
+    (0, 100, 0),
+    (0, 0, 100) ]
 
 # Default W/H
 W = 2394
@@ -32,10 +32,8 @@ class CairoPlotter:
         self.window = (0, 0, W, H)
         self.text_theta = 0
         self.text_size = 1
-        #self.pos = (0,0)
         #self.clip = None
         #self.clipno = 0
-        self.in_path = False
         self.update_ctm()
 
     # A quick review of coordinate systems:
@@ -61,9 +59,12 @@ class CairoPlotter:
         self.context.set_font_matrix(m.multiply(m2))
 
     def finish_path(self):
-        if self.in_path:
-            self.context.stroke_preserve()
-            self.in_path = False
+        cp = self.context.get_current_point()
+        self.context.save()
+        self.context.set_matrix(cairo.Matrix())
+        self.context.stroke()
+        self.context.restore()
+        self.context.move_to(cp[0],cp[1])
 
     def vp(self, params):
         l=coordlist(params,4)
@@ -86,14 +87,12 @@ class CairoPlotter:
 
     def da(self, params):
         l=coordlist(params)
-        self.in_path = True
         while len(l) > 0:
             x, y, l = l[0],l[1],l[2:]
             self.context.line_to(x,y)
 
     def dr(self, params):
         l=coordlist(params)
-        self.in_path = True
         while len(l) > 0:
             x, y, l = l[0],l[1],l[2:]
             p=self.context.get_current_point()
@@ -115,8 +114,9 @@ class CairoPlotter:
         if len(l) > 3:
             p=(l[3],l[4])
         else:
-            p=self.pos
-        t2, t1 = math.radians(l[1]),math.radians(l[2])
+            p=self.context.get_current_point()
+        t1, t2 = math.radians(l[1]),math.radians(l[2])
+        self.context.new_sub_path()
         self.context.arc(p[0],p[1],r,t1,t2)
 
     def lr(self,params):
@@ -130,6 +130,8 @@ class CairoPlotter:
     def ps(self,params):
         self.finish_path()
         self.pennum = int(params) - 1
+        p = self.pennum
+        self.context.set_source_rgb(pens[p][0],pens[p][1],pens[p][2])
 
     def pl(self,params):
         self.finish_path()
