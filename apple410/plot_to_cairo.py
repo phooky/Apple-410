@@ -32,8 +32,6 @@ class CairoPlotter:
         self.window = (0, 0, W, H)
         self.text_theta = 0
         self.text_size = 1
-        #self.clip = None
-        #self.clipno = 0
         self.update_ctm()
 
     # A quick review of coordinate systems:
@@ -49,9 +47,11 @@ class CairoPlotter:
         y0 = v[1] - w[1]*ys
         window_m = cairo.Matrix(xx=xs, yy=ys, x0=x0, y0=y0)
         pn_to_cn = cairo.Matrix(yy=-1.0, y0=H)
-        #self.context.set_matrix(pn_to_cn.multiply(window_m))
         self.context.set_matrix(window_m.multiply(pn_to_cn))
         self.context.set_line_width(LW)
+        self.context.reset_clip()
+        self.context.rectangle(w[0],w[1],w[2]-w[0],w[3]-w[1])
+        self.context.clip()
 
     def update_font(self):
         m = cairo.Matrix(xx=self.text_size, yy=-self.text_size)
