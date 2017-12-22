@@ -37,7 +37,6 @@ class CairoPlotter:
         #self.clipno = 0
         self.in_path = False
         self.update_ctm()
-        self.context.set_line_width(LW)
 
     # A quick review of coordinate systems:
     # Cairo native: origin at upper left, x+ to right, y+ down.
@@ -45,32 +44,36 @@ class CairoPlotter:
     # Plotter window: same as plotter native.
     # We want to display in plotter native.
     def update_ctm(self):
+        v,w = self.viewport,self.window
+        xs = (v[2]-v[0])/(w[2]-w[0])
+        ys = (v[3]-v[1])/(w[3]-w[1])
+        x0 = v[0] - w[0]*xs
+        y0 = v[1] - w[1]*ys
+        window_m = cairo.Matrix(xx=xs, yy=ys, x0=x0, y0=y0)
         pn_to_cn = cairo.Matrix(yy=-1.0, y0=H)
-        self.context.set_matrix(pn_to_cn)
+        #self.context.set_matrix(pn_to_cn.multiply(window_m))
+        self.context.set_matrix(window_m.multiply(pn_to_cn))
+        self.context.set_line_width(LW)
 
     def update_font(self):
         m = cairo.Matrix(xx=self.text_size, yy=-self.text_size)
         m2 = cairo.Matrix.init_rotate(math.radians(self.text_theta))
-        m.multiply(m2)
-        self.context.set_font_matrix(m)
+        self.context.set_font_matrix(m.multiply(m2))
 
     def finish_path(self):
         if self.in_path:
             self.context.stroke_preserve()
             self.in_path = False
 
-    def invalidate_window(self):
-        pass
-
     def vp(self, params):
-        self.invalidate_window()
         l=coordlist(params,4)
         self.viewport=(l[0],l[1],l[2],l[3])
+        self.update_ctm()
 
     def wd(self, params):
-        self.invalidate_window()
         l=coordlist(params,4)
         self.window=(l[0],l[1],l[2],l[3])
+        self.update_ctm()
     
     def ma(self, params):
         l=coordlist(params,2)
