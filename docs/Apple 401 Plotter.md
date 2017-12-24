@@ -299,7 +299,7 @@ WDx1,y1,x2,y2
 
 The window into which to draw. See the introduction for an explanation of how the window
 is used. `x1,y1` specify the upper left hand corner
-of the viewport; `x2,y2` specify the lower right hand of the viewport.
+of the window; `x2,y2` specify the lower right hand of the window.
 
 Params: 4
 
