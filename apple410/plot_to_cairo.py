@@ -22,9 +22,18 @@ LW = 5
 
 class CairoPlotter:
 
-    def __init__(self, path):
-        self.surface = cairo.SVGSurface(path, W, H)
+    def __init__(self, path, surftype = 'SVG'):
+        self.surftype = surftype
+        if surftype == 'SVG':
+            self.surface = cairo.SVGSurface(path, W, H)
+        elif surftype == 'PNG':
+            self.path = path
+            self.surface = cairo.ImageSurface(cairo.Format.RGB24,W,H)
         self.context = cairo.Context(self.surface)
+        if surftype == 'PNG':
+            self.context.rectangle(0,0,W,H)
+            self.context.set_source_rgb(1.0,1.0,1.0)
+            self.context.fill()
         #self.context.scale(W,H)
         self.context.select_font_face("monospace")
         self.pennum = 0
@@ -141,6 +150,11 @@ class CairoPlotter:
 
     def write(self):
         self.finish_path()
+        if self.surftype == 'PNG':
+            if self.path == '-':
+                self.surface.write_to_png(sys.stdout)
+            else:
+                self.surface.write_to_png(self.path)
         self.surface.finish()
 
     def process_cmd(self,command):

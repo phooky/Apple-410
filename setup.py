@@ -55,6 +55,7 @@ setup(
                 'apple410=apple410.cmdline:main',
                 'a410svg2plot=apple410.cmdline:svg2plot',
                 'a410plot2svg=apple410.cmdline:plot2svg',
+                'a410plot2png=apple410.cmdline:plot2png',
                 ],
             },
     )

@@ -62,3 +62,17 @@ def plot2svg():
     p.read(f)
     p.write()
     
+def plot2png():
+    parser = argparse.ArgumentParser("plot2png",
+            description="Convert a set of Apple 410 Color Plotter commands to a PNG")
+    parser.add_argument('PLOT', help='The plotter file to process. "-" will read plotter commands from standard input.')
+    args = parser.parse_args()
+    if args.PLOT == '-':
+        f = sys.stdin
+    else:
+        f = open(args.PLOT)
+    p = CairoPlotter(sys.stdout.buffer,'PNG')
+    p.read(f)
+    p.write()
+    
+
