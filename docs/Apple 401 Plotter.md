@@ -376,12 +376,12 @@ Selecting error action
 | 16 | Pen would go outside window    | 
 
 
-IM0,31 turns on error checking; IM0,0 turns it off?
-This is referenced obliquely in part II of the manual.
 
 ## Unknown commands
 
 PK - ??? - no params/arb (Not in user reference)
+
 SP - ??? - 1 param ??   Size Paper
+
 LF - ??? - 1 param ? 0-9  Letter Font
 
