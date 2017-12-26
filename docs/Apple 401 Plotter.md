@@ -132,7 +132,7 @@ specified the circle will be centered at the current position.
 
 Params: 1 or 3
 
-### Letter Initialized (LI)
+### Letter Initialize (LI)
 
 ```
 LI
