@@ -381,7 +381,7 @@ This is referenced obliquely in part II of the manual.
 
 ## Unknown commands
 
-PK - ??? - no params/arb
-SP - ??? - 1 param ??
-LF - ??? - 1 param ? 0-9
+PK - ??? - no params/arb (Not in user reference)
+SP - ??? - 1 param ??   Size Paper
+LF - ??? - 1 param ? 0-9  Letter Font
 
