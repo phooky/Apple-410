@@ -132,6 +132,14 @@ specified the circle will be centered at the current position.
 
 Params: 1 or 3
 
+### Letter Initialized (LI)
+
+```
+LI
+```
+
+Reset the text format.
+
 ### Letter size (LS)
 
 ```
@@ -176,14 +184,15 @@ Params: 1
 ### Line type (LT)
 
 ```
-LTn
+LTp(,k)
 ```
 
-Select the line style for subsequent draw operations. `n` is a value in the
+Select the line style for subsequent draw operations. `p` is a value in the
 range 1-9:
 
 | n | Line style       |
 |---|------------------|
+| 0 | Custom pattern (see UL) |
 | 1 | Solid            | 
 | 2 | Dotted           | 
 | 3 | Short dash       | 
@@ -194,7 +203,18 @@ range 1-9:
 | 8 | Line w/ two dots         |
 | 9 | Line w/ two short dashes |
 
-Params: 1
+`k` specifies the repeat length in mesurement units. The default is 100, but the value will persist.
+
+Params: 1 or 2
+
+```
+ULd1,m1(,d2,m3,..d6,m6)
+```
+
+Create a custom pattern for use with subsequent LT0 operations.
+
+`d` specifies a draw length, `m` specifies a move length.
+
 
 ### X-axis ticks (XT)
 
@@ -332,17 +352,36 @@ Params: 3 or 5
 ### Unknown (IM)
 
 ```
-IMa,b
+IMa(,b)
 ```
+
+Selecting error action
+
+`a` specifies the mode: 0 = turn on error light; 64 = reject commands ; 192 = write message.
+
+| a | Mode       |
+|---|------------------|
+| 0 | Turn on error light |
+| 1 | Reject command      | 
+| 2 | Write error message | 
+
+`b` specifies the errors to filter. Default is 31.
+
+| a | Error type       |
+|---|------------------|
+|  1 | Command not recognized |
+|  2 | Numbers outside range  | 
+|  4 | Not enough numbers for command | 
+|  8 | Bad syntax       |
+| 16 | Pen would go outside window    | 
+
 
 IM0,31 turns on error checking; IM0,0 turns it off?
 This is referenced obliquely in part II of the manual.
 
 ## Unknown commands
 
-LI - ??? - no params/arb ???
 PK - ??? - no params/arb
-UL - ??? - no params/arb ? 1 param 0-9?
 SP - ??? - 1 param ??
 LF - ??? - 1 param ? 0-9
 
