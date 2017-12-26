@@ -1,5 +1,6 @@
 notch_width = 2.5;
-
+$fa = 8;
+$fs = 0.5;
 module peg_hole() {
     union() {
         difference() {
@@ -30,9 +31,26 @@ module shell() {
     }
 }
 
+module pen(which) {
+    rotate([0,0,which*90]) {
+        translate([10,0,4]) rotate([0,90,0]) {
+            cylinder(h=10,d=4,center=false);
+        }
+    }
+}
+
+module pens() {
+    for (i=[0:4]) {
+        pen(i);
+    }
+}
+    
 difference() {
-    shell();
-    translate([0,0,-0.001]) {
+    union() {
+        shell();
+    }
+    pens();
+    translate([0,0,-0.005]) {
         peg_hole();
     }
 }
