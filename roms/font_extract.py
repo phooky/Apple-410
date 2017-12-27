@@ -27,12 +27,13 @@ def get_char(ft,off):
 
 def unpack_byte(b):
     "convert two 4-bit signed packed numbers to a tuple"
-    def sign4b(x):
-        # not... quite two's complement
-        if x > 8:
-            return x - 16
-        return x
-    return (sign4b(b>>4), sign4b(b % 16))
+    # this packing is... unusual.
+    x = b >> 4
+    y = b % 16
+    if y > 8: # now the weird
+        x -= 1
+        y -= 16
+    return (x,y)
 
 # H:W for a char is 3:2
 def unpack_coords(b,xscale=66,yscale=100,xoff=10,yoff=10):
@@ -41,10 +42,10 @@ def unpack_coords(b,xscale=66,yscale=100,xoff=10,yoff=10):
     return (x*xscale + xoff, (8 - y)*yscale + yoff)
 
 def build_char_file(path, ft, offset):
-    surf = cairo.SVGSurface(path, 1000, 1000)
+    surf = cairo.SVGSurface(path, 1000, 1220)
     c = cairo.Context(surf)
     d = list(get_char(ft, offset))
-    c.set_source_rgb(0, 0, 0)
+    #c.set_source_rgb(0.0, 0.0, 0.0)
     c.set_line_width(20)
     c.set_line_cap(cairo.LINE_CAP_ROUND)
     c.set_line_join(cairo.LINE_JOIN_ROUND)
