@@ -32,7 +32,9 @@ def get_char(ft,off):
 
 def bytecoords(b):
     rx, ry = math.floor(b/16), b%16 
-    ry = 15 - ry  # inverted y axis
+    if ry > 8:
+        ry = ry - 16
+    ry = 8 - ry  # inverted y axis
     return ( 50 + rx*16, 50 + ry*16 )
 
 def OnDraw(w, cr):
@@ -49,10 +51,12 @@ def OnDraw(w, cr):
             # move
             (x,y) = bytecoords( data.pop(0) )
             cr.move_to(x,y)
-        elif c == 0x21:
-            # draw to
-            (x,y) = bytecoords( data.pop(0) )
-            cr.line_to(x,y)
+        elif c > 0x20:
+            segments = c - 0x20
+            for s in range(segments):
+                # draw to
+                (x,y) = bytecoords( data.pop(0) )
+                cr.line_to(x,y)
     cr.stroke()
 
 def OnKey(w, event):
