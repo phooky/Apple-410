@@ -34,10 +34,11 @@ def unpack_byte(b):
         return x
     return (sign4b(b>>4), sign4b(b % 16))
 
-def unpack_coords(b,scale=100,xoff=0,yoff=0):
+# H:W for a char is 3:2
+def unpack_coords(b,xscale=66,yscale=100,xoff=10,yoff=10):
     "convert two 4-bit signed packed numbers to cairo coordinates"
     (x,y) = unpack_byte(b)
-    return (x*scale, (8 - y)*scale + yoff)
+    return (x*xscale + xoff, (8 - y)*yscale + yoff)
 
 def build_char_file(path, ft, offset):
     surf = cairo.SVGSurface(path, 1000, 1000)
@@ -46,6 +47,7 @@ def build_char_file(path, ft, offset):
     c.set_source_rgb(0, 0, 0)
     c.set_line_width(20)
     c.set_line_cap(cairo.LINE_CAP_ROUND)
+    c.set_line_join(cairo.LINE_JOIN_ROUND)
     while d:
         cmd = d.pop(0)
         cn, ca = cmd >> 4, cmd % 16
