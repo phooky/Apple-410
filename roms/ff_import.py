@@ -33,5 +33,5 @@ print "glyph count {}".format(len(font))
 #print font.createChar(0x41)
 #font[0x41].importOutlines("alpha_41.svg")
 
-font.save("Apple410.ttf")
+font.save("Apple410-new.sfd")
 
