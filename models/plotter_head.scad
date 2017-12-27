@@ -1,15 +1,15 @@
-notch_width = 2.5;
-$fa = 8;
+5notch_width = 2.5;
+$fa = 6;
 $fs = 0.5;
 module peg_hole() {
     union() {
         difference() {
             union() {
-                cylinder(h=21.5,d1=7.8,d2=7.2,center=false);
+                cylinder(h=21.5,d1=7.8,d2=7.5,center=false);
                 // Chamfer
-                cylinder(h=1,d1=8.2,d2=7.8,center=false);
+                cylinder(h=1.25,d1=9.2,d2=7.7,center=false);
             }
-            translate([2.5, -5, -0.1]) {
+            translate([3.3, -5, -0.1]) {
                 cube([10,10,30]);
             }
         }
@@ -44,7 +44,9 @@ module pens() {
         pen(i);
     }
 }
-    
+
+//peg_hole();
+
 difference() {
     union() {
         shell();
