@@ -2,6 +2,8 @@
 import sys
 import math
 import cairo
+import pkg_resources
+import pickle
 
 def coordlist(line,expected=-1):
     l = list(map(float,line.split(',')))
@@ -42,6 +44,10 @@ class CairoPlotter:
         self.text_theta = 0
         self.text_size = 1
         self.update_ctm()
+        # load plotter fonts
+        char_f = open(pkg_resources.resource_filename('apple410','data/a410_chars.pickle'),'rb')
+        self.char_map = pickle.load(char_f)
+
 
     # A quick review of coordinate systems:
     # Cairo native: origin at upper left, x+ to right, y+ down.
