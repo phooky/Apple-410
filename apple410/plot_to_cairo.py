@@ -22,6 +22,51 @@ W = 2394
 H = 1759
 LW = 5
 
+class Font:
+    def __init__(self,path):
+        f = open(pkg_resources.resource_filename('apple410',path),'rb')
+        self.char_map = pickle.load(f)
+
+
+    def unpack_byte(b):
+        "convert two 4-bit signed packed numbers to a tuple"
+        # this packing is... unusual.
+        x = b >> 4
+        y = b % 16
+        if y > 8: # now the weird
+            x -= 1
+            y -= 16
+        return (x,y)
+
+    def render_char(self, ctx, char, xoff, yoff):
+        d = list(self.char_map[char])
+        while d:
+            cmd = d.pop(0)
+            cn, ca = cmd >> 4, cmd % 16
+            for _ in range(ca):
+                (x1, y1) = Font.unpack_byte(d.pop(0))
+                x = x1 + xoff
+                y = y1 + yoff
+                if cn == 0:
+                    ctx.move_to(x,y)
+                elif cn == 2:
+                    ctx.line_to(x,y)
+        ctx.stroke()
+
+    def render_string(self,ctx,s):
+        xoff = 0
+        yoff = 0
+        ctx.set_line_width(1)
+        for c in s:
+            if c == '\r' or c == '\n':
+                xoff = 0
+                yoff += 100
+            elif c == '\n':
+                xoff += 200
+            else:
+                self.render_char(ctx,c,xoff,yoff)
+                xoff += 10
+
 class CairoPlotter:
 
     def __init__(self, path, surftype = 'SVG'):
@@ -43,10 +88,10 @@ class CairoPlotter:
         self.window = (0, 0, W, H)
         self.text_theta = 0
         self.text_size = 1
+        self.context.set_line_cap(cairo.LINE_CAP_ROUND)
+        self.context.set_line_join(cairo.LINE_JOIN_ROUND)
         self.update_ctm()
-        # load plotter fonts
-        char_f = open(pkg_resources.resource_filename('apple410','data/a410_chars.pickle'),'rb')
-        self.char_map = pickle.load(char_f)
+        self.char_font = Font('data/a410_chars.pickle')
 
 
     # A quick review of coordinate systems:
@@ -151,8 +196,11 @@ class CairoPlotter:
     def pl(self,params):
         self.finish_path()
         (x,y) = self.context.get_current_point()
+        self.context.save()
+        self.context.translate(x,y)
         sys.stderr.write("text at {} {}\n".format(x,y))
-        self.context.show_text(params)
+        self.char_font.render_string(self.context,params)
+        self.context.restore()
 
     def write(self):
         self.finish_path()
