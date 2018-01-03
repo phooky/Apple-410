@@ -234,9 +234,15 @@ is interpreted.
 | a         | length of tick mark above the axis    |
 | b         | length of tick mark below the axis    |
 
-If the `s` parameter is set to 1, then the distance is interpreted as
-the length of the entire axis. If `s` is set to 2, then the distance is
-interpretes as the length of the space between adjacent tick marks.
+The `s` parameter determines how the `d` parameter is interpreted and whether
+the first tick mark (at the "0" point on the axis) is drawn or not:
+
+| style parameter  |  description                        |
+|------------------|-------------------------------------|
+| 0                | d is distance between ticks         |
+| 1                | d is total length of axis           |
+| 2                | d is distance between ticks, first tick mark is not drawn |
+| 3                | d is total length of axis, first tick mark is not drawn |
 
 Params: 5
 
