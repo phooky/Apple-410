@@ -174,16 +174,21 @@ class CairoPlotter:
         left = l[3]
         right = l[4]
         num = int(l[2])
-        if l[0]:
+        style = int(l[0])
+        if style > 3:
+            sys.stderr.write("Unrecognized tick mark style {}\n".format(style))
+            return
+        if style:
             dist = l[1]
             tw = dist/num
         else:
             dist = l[1]*num
             tw = l[1]
+        first = style >> 1
         (x,y) = self.context.get_current_point()
         self.context.line_to(x,y+dist)
-        for i in range(num):
-            y1 = y + tw*(i+1)
+        for i in range(first,num+1):
+            y1 = y + tw*i
             self.context.move_to(x+left,y1)
             self.context.line_to(x-right,y1)
 
@@ -192,16 +197,21 @@ class CairoPlotter:
         above = l[3]
         below = l[4]
         num = int(l[2])
-        if l[0]:
+        style = int(l[0])
+        if style > 3:
+            sys.stderr.write("Unrecognized tick mark style {}\n".format(style))
+            return
+        if style & 0x01:
             dist = l[1]
             tw = dist/num
         else:
             dist = l[1]*num
             tw = l[1]
+        first = style >> 1
         (x,y) = self.context.get_current_point()
         self.context.line_to(x+dist,y)
-        for i in range(num):
-            x1 = x + tw*(i+1)
+        for i in range(first,num+1):
+            x1 = x + tw*i
             self.context.move_to(x1,y+above)
             self.context.line_to(x1,y-below)
 
