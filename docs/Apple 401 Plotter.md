@@ -384,12 +384,29 @@ that it will literally write the error message out on the plotter.
 |  8 | Bad syntax       |
 | 16 | Pen would go outside window    | 
 
+### Size Paper (SP)
+
+```SPn```
+
+Sets the current paper size. This is essentially a preset "VP" command. The table below of
+drawing area sizes is approximate, based on measuring a rectangle drawn at the extent of the
+entire viewport.
+
+| n | measurement (in mm) |
+|---|---------------------|
+| 0 | 241 x 175           |
+| 1 | 178 x 240 |
+| 2 | 394 x 240 |
+| 3 | 282 x 280(?) |
+| 4 | 259 x 170 |
+| 5 | 171 x 280(?) |
+| 6 | 326 x 217 |
+| 7 | 218 x 142 |
+| 8 | 143 x 217 |
 
 ## Unknown commands
 
 PK - ??? - no params/arb (Not in user reference)
-
-SP - ??? - 1 param ??   Size Paper
 
 LF - ??? - 1 param ? 0-9  Letter Font
 
