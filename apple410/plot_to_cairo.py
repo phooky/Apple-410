@@ -51,7 +51,6 @@ class Font:
                     ctx.move_to(x,y)
                 elif cn == 2:
                     ctx.line_to(x,y)
-        ctx.stroke()
 
     def render_string(self,ctx,s):
         xoff = 0
@@ -127,11 +126,13 @@ class CairoPlotter:
         self.context.move_to(cp[0],cp[1])
 
     def vp(self, params):
+        self.finish_path()
         l=coordlist(params,4)
         self.viewport=(l[0],l[1],l[2],l[3])
         self.update_ctm()
 
     def wd(self, params):
+        self.finish_path()
         l=coordlist(params,4)
         self.window=(l[0],l[1],l[2],l[3])
         self.update_ctm()
@@ -236,7 +237,6 @@ class CairoPlotter:
         self.context.translate(x,y)
         self.context.rotate(math.radians(self.text_theta))
         self.context.scale(self.text_size/10.0, self.text_size/8.0)
-        sys.stderr.write("text at {} {}\n".format(x,y))
         self.char_font.render_string(self.context,params)
         self.context.restore()
 
