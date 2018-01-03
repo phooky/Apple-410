@@ -355,7 +355,7 @@ After the arc is drawn, the endpoint of the arc is considered to be the new posi
 
 Params: 3 or 5
 
-### Unknown (IM)
+### Error action (IM)
 
 ```
 IMa(,b)
@@ -368,8 +368,11 @@ Selecting error action
 | a | Mode       |
 |---|------------------|
 | 0 | Turn on error light |
-| 1 | Reject command      | 
-| 2 | Write error message | 
+| 64 | Reject command      | 
+| 192 | Write error message | 
+
+Do note that "write message" does not mean to send a response over the serial port; it means
+that it will literally write the error message out on the plotter.
 
 `b` specifies the errors to filter. Default is 31.
 
@@ -380,7 +383,6 @@ Selecting error action
 |  4 | Not enough numbers for command | 
 |  8 | Bad syntax       |
 | 16 | Pen would go outside window    | 
-
 
 
 ## Unknown commands
