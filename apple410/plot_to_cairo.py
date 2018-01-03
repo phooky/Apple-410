@@ -60,9 +60,9 @@ class Font:
         for c in s:
             if c == '\r' or c == '\n':
                 xoff = 0
-                yoff += 100
+                yoff += 10
             elif c == '\n':
-                xoff += 200
+                xoff += 20
             else:
                 self.render_char(ctx,c,xoff,yoff)
                 xoff += 10
@@ -198,6 +198,8 @@ class CairoPlotter:
         (x,y) = self.context.get_current_point()
         self.context.save()
         self.context.translate(x,y)
+        self.context.rotate(math.radians(self.text_theta))
+        self.context.scale(self.text_size/10.0, self.text_size/8.0)
         sys.stderr.write("text at {} {}\n".format(x,y))
         self.char_font.render_string(self.context,params)
         self.context.restore()
