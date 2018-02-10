@@ -60,7 +60,7 @@ class Font:
             if c == '\r' or c == '\n':
                 xoff = 0
                 yoff += 10
-            elif c == '\n':
+            elif c == '\t':
                 xoff += 20
             else:
                 self.render_char(ctx,c,xoff,yoff)
